@@ -12,3 +12,86 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id                   String      @id @default(uuid())
+  first_name           String
+  last_name            String
+  email                String      @unique
+  password             String
+  pass_code            String?
+  exp_date             DateTime?
+  is_admin             Boolean     @default(dbgenerated("(false)"))
+  role                 User_roles?
+  phone                String?
+  avatar               String?
+  currency             Currency?
+  monthly_income       Decimal?
+  tax_rate             Decimal?
+  is_profile_completed Boolean     @default(dbgenerated("(false)"))
+  created_at           DateTime    @default(now())
+  updated_at           DateTime    @updatedAt
+}
+
+enum User_roles {
+  INDIVIDUAL
+  EMPLOYEE
+  MANAGER
+  ADMIN
+}
+
+enum Currency {
+  // North America
+  USD // United States Dollar
+  CAD // Canadian Dollar
+  MXN // Mexican Peso
+
+  // Europe
+  EUR // Euro (Eurozone countries)
+  GBP // British Pound
+  CHF // Swiss Franc
+  NOK // Norwegian Krone
+  SEK // Swedish Krona
+  DKK // Danish Krone
+
+  // Middle East
+  EGP // Egyptian Pound
+  AED // Emirati Dirham (United Arab Emirates)
+  SAR // Saudi Riyal (Saudi Arabia)
+  QAR // Qatari Riyal
+  KWD // Kuwaiti Dinar
+  OMR // Omani Rial
+  BHD // Bahraini Dinar
+
+  // Asia
+  JPY // Japanese Yen
+  CNY // Chinese Yuan
+  INR // Indian Rupee
+  PKR // Pakistani Rupee
+  LKR // Sri Lankan Rupee
+
+  // Africa
+  ZAR // South African Rand
+  NGN // Nigerian Naira
+  GHS // Ghanaian Cedi
+  KES // Kenyan Shilling
+
+  // South America
+  BRL // Brazilian Real
+  ARS // Argentine Peso
+  CLP // Chilean Peso
+  COP // Colombian Peso
+
+  // Oceania
+  AUD // Australian Dollar
+  NZD // New Zealand Dollar
+
+  // Others
+  RUB // Russian Ruble
+  TRY // Turkish Lira
+  KRW // South Korean Won
+  SGD // Singapore Dollar
+  HKD // Hong Kong Dollar
+
+  NON // not here
+}

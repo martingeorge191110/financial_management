@@ -1,13 +1,15 @@
-import express, {Response, Request} from 'express'
+import express from 'express'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import Api_error from './middlewares/error.middleware.ts'
+import Auth_router from './routes/auth.routes.ts'
 
 
 dotenv.config()
 
-const env = process.env
+export const env = process.env
 const app = express()
 
 /* Built in middle wares */
@@ -29,13 +31,14 @@ app.use(express.urlencoded({
 /* Starting api routes */
 
 
+app.use("/api/auth", Auth_router)
 
 
 
 /* End of api routes */
 
 /* Api error handling middle ware*/
-
+app.use("*", Api_error.error_middleware)
 
 
 app.listen(env.PORT, () => {
