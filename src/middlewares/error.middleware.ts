@@ -28,8 +28,8 @@ class Api_error extends Error{
    }
 
    /* creating error */
-   public static create_error = (message: string): Api_error => {
-      return (new Api_error(message, null))
+   public static create_error = (message: string, status_code: number): Api_error => {
+      return (new Api_error(message, null, status_code))
    }
 
    /* creating error */

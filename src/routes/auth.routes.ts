@@ -15,5 +15,19 @@ Auth_router.route("/register/")
                      )
 
 
+Auth_router.route("/login/")
+                     .post(
+                        auth_instance.login_valid(), auth_instance.validation_error,
+                        auth_instance.login
+                     )
+
+
+
+Auth_router.route("/verify_reseting_password/")
+                     .post(
+                        auth_instance.send_reset_page_valid(), auth_instance.validation_error,
+                        auth_instance.send_reseting_page
+                     )
+
 
 export default Auth_router;

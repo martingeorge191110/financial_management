@@ -38,6 +38,11 @@ class Auth_utilies extends Global_utilies{
          maxAge: 1000 * 60 * 60 * 24 * 3 as number
       })
    }
+
+   /* Function to compare passwords */
+   compare_password = (password: string, hashed_passowrd: string) => {
+      return (bcrypt.compareSync(password, hashed_passowrd))
+   }
 }
 
 export default Auth_utilies

@@ -1,4 +1,5 @@
-import { Response } from "express"
+import { User } from "@prisma/client"
+import { Request, Response } from "express"
 import { ValidationChain } from "express-validator"
 
 /* Type alias for returning array of validation chan */
@@ -22,4 +23,16 @@ export interface response_object {
    success: boolean;
    message: string;
    result: object;
+}
+
+/* Type alias for promise boolean */
+export type promise_bool = Promise<boolean> 
+
+/* Add `user` with the type of your Prisma User mode */
+declare global {
+   namespace Express {
+      interface Request {
+         user?: User;
+      }
+   }
 }
