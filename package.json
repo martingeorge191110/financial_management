@@ -2,10 +2,11 @@
   "name": "financial_management",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/app.ts"
+    "dev": "nodemon ./src/app.ts",
+    "start": "node dest/app.js"
   },
   "keywords": [],
   "author": "",

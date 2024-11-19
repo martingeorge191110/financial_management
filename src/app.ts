@@ -7,13 +7,13 @@ import cookieParser from 'cookie-parser'
 
 dotenv.config()
 
+const env = process.env
 const app = express()
-
 
 /* Built in middle wares */
 app.use(cors({
-   origin: "*",
-   credentials: false
+   origin: env.NODE_ENV === "development" ? "*" : undefined,
+   credentials: false as boolean
 }))
 
 app.use(express.json())
@@ -38,6 +38,6 @@ app.use(express.urlencoded({
 
 
 
-app.listen(8000, () => {
-   console.log("server is running")
+app.listen(env.PORT, () => {
+   console.log(`Server running http://${env.HOSTNAME}:${env.PORT}`)
 })
