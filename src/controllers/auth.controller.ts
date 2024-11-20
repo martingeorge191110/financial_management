@@ -3,7 +3,8 @@ import Auth_validator from "../validators/auth.validator.ts";
 import Api_error from "../middlewares/error.middleware.ts";
 import prisma_db from "../prisma.db.ts";
 import { User } from "@prisma/client";
-import { response_type, token_object } from "../types/app.types.ts";
+import { response_type, token_object, validator_chain } from "../types/app.types.ts";
+import path from "path";
 
 
 
@@ -81,6 +82,20 @@ class Auth_controller extends Auth_validator {
          return (next(Api_error.server_error("server error while login")))
 
       const user: User = req.user
+      console.log(req.get("host"))
+
+      const code: string = String(Math.random()).slice(2,8)
+      try {
+         await prisma_db.user.update({
+            where: {
+               email: user.email, id: user.id
+            }, data: {
+               pass_code: code, exp_date: new Date(Date.now() + 5 * 60 * 1000)
+            }
+         })
+      } catch (err) {
+         return (next(Api_error.server_error("Server error during creating generated code!")))
+      }
 
       try {
          const send_mail: boolean = await this.send_mail(user.email, "Reseting passsword", `
@@ -88,7 +103,8 @@ class Auth_controller extends Auth_validator {
                   <h2>Password Reset Request</h2>
                </div>
             <div class="email-content"> <p>Hi ${user.first_name},</p> <p>We received a request to reset the password for your account. If you requested this change, please click the button below to reset your password:</p>
-            <a href="https://yourwebsite.com/reset-password" class="reset-button">Reset Your Password</a>
+            <p>${code}</p>
+            <a href="${req.protocol}://${req.get('host')}/api/auth/reset_password_page/${user.id}" class="reset-button">Reset Your Password</a>
             <p>If you did not request this, you can safely ignore this email.</p>
             </div><div class="footer">
             <p>&copy; 2024 Your Company Name. All rights reserved.</p></div></div>`)
@@ -101,6 +117,74 @@ class Auth_controller extends Auth_validator {
 
       this.response_successfuly(res, 200, "We have sent a mail to your email!",{
          success: true
+      })
+   }
+
+   /* Controller to validate sending html file, to reset password
+      --> send the validation html file after validation*/
+   verify_reseting_page = async (req: Request, res: Response, next: NextFunction): response_type => {
+      return (res.status(200).sendFile(
+         path.join(process.cwd(), "src", "static", "reset_password", "verify_reseting.html")
+      ))
+   }
+
+   /* Controller to just check the code and email
+      --> check whether the pass code is not true
+      --> update the pass code info to be null
+      --> redirect user to the resetting password page*/
+   check_code_controller = async (req: Request, res: Response, next: NextFunction): response_type => {
+      const user: (User | null) = req.user || null
+      const {code} = req.body
+
+      if (user?.pass_code !== code)
+         return (next(Api_error.create_error("Wrong Pass Code!", 400)))
+
+      try {
+         await prisma_db.user.update({
+            where: {
+               email: user?.email, id: user?.id
+            }, data: {
+               pass_code: null, exp_date: null
+            }
+         })
+      } catch (err) {
+         return (next(Api_error.server_error("Server error during checking the code!")))
+      }
+
+      this.response_successfuly(res, 200, "Now you can reset your password!", {
+         ...user, url: `${req.protocol}://${req.get("host")}/api/auth/reset-password/${user?.id}?success=true`
+      })
+   }
+
+   /* Controller that eredirect user to the reseting page
+      --> send resetting paassword html file*/
+   resetting_page_controller = async (req: Request, res: Response, next: NextFunction): response_type => {
+      return (res.status(200).sendFile(
+         path.join(process.cwd(), "src", "static", "reset_password", "reset_password.html")
+      ))
+   }
+
+   /* Controller to reset the password
+      --> */
+   reset_password_controller = async (req: Request, res: Response, next: NextFunction): response_type => {
+      const user: (User | null) = req.user || null
+      const {password} = req.body
+
+      const hashed_passowrd: string = this.hashed_password(password)
+      try {
+         await prisma_db.user.update({
+            where: {
+               id: user?.id, email: user?.email
+            }, data: {
+               password: hashed_passowrd
+            }
+         })
+      } catch (err) {
+         return (next(Api_error.server_error("Server error during reseting the password!")))
+      }
+
+      this.response_successfuly(res, 200, "Password has been updated Successfuly!", {
+         id: user?.id, email: user?.email
       })
    }
 }
