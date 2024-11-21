@@ -15,7 +15,7 @@ class Auth_controller extends Auth_validator {
    /* Register controller
          --> creating new user, --> set new token,
          --> set new cookies, --> then response */
-   register = async (req: Request, res: Response, next: NextFunction): response_type => {
+   public register = async (req: Request, res: Response, next: NextFunction): response_type => {
       const {first_name, last_name, email, password} = req.body
 
       const hashed_password: string = this.hashed_password(password)
@@ -49,7 +49,7 @@ class Auth_controller extends Auth_validator {
    /* Login controller
          --> compare pasword with hashed one, --> set new token,
          --> set new cookies, --> then response */
-   login = async (req: Request, res: Response, next: NextFunction): response_type => {
+   public login = async (req: Request, res: Response, next: NextFunction): response_type => {
       if (!req.user || req.user === undefined)
          return (next(Api_error.server_error("server error while login")))
 
@@ -77,7 +77,7 @@ class Auth_controller extends Auth_validator {
    /* verify_reseting_password controller
             -->  send mail to user, --> check whther mail send or not
             --> then response */
-   send_reseting_page = async (req: Request, res: Response, next: NextFunction): response_type => {
+   public send_reseting_page = async (req: Request, res: Response, next: NextFunction): response_type => {
       if (!req.user || req.user === undefined)
          return (next(Api_error.server_error("server error while login")))
 
@@ -122,7 +122,7 @@ class Auth_controller extends Auth_validator {
 
    /* Controller to validate sending html file, to reset password
       --> send the validation html file after validation*/
-   verify_reseting_page = async (req: Request, res: Response, next: NextFunction): response_type => {
+   public verify_reseting_page = async (req: Request, res: Response, next: NextFunction): response_type => {
       return (res.status(200).sendFile(
          path.join(process.cwd(), "src", "static", "reset_password", "verify_reseting.html")
       ))
@@ -132,7 +132,7 @@ class Auth_controller extends Auth_validator {
       --> check whether the pass code is not true
       --> update the pass code info to be null
       --> redirect user to the resetting password page*/
-   check_code_controller = async (req: Request, res: Response, next: NextFunction): response_type => {
+   public check_code_controller = async (req: Request, res: Response, next: NextFunction): response_type => {
       const user: (User | null) = req.user || null
       const {code} = req.body
 
@@ -158,7 +158,7 @@ class Auth_controller extends Auth_validator {
 
    /* Controller that eredirect user to the reseting page
       --> send resetting paassword html file*/
-   resetting_page_controller = async (req: Request, res: Response, next: NextFunction): response_type => {
+   public resetting_page_controller = async (req: Request, res: Response, next: NextFunction): response_type => {
       return (res.status(200).sendFile(
          path.join(process.cwd(), "src", "static", "reset_password", "reset_password.html")
       ))
@@ -166,7 +166,7 @@ class Auth_controller extends Auth_validator {
 
    /* Controller to reset the password
       --> */
-   reset_password_controller = async (req: Request, res: Response, next: NextFunction): response_type => {
+   public reset_password_controller = async (req: Request, res: Response, next: NextFunction): response_type => {
       const user: (User | null) = req.user || null
       const {password} = req.body
 

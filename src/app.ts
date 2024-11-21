@@ -5,6 +5,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import Api_error from './middlewares/error.middleware.ts'
 import Auth_router from './routes/auth.routes.ts'
+import User_router from './routes/user.routes.ts'
 
 
 dotenv.config()
@@ -30,9 +31,11 @@ app.use(express.urlencoded({
 
 /* Starting api routes */
 
-
+/* User Authintication Route */
 app.use("/api/auth", Auth_router)
 
+/* User Profile manipulating Route */
+app.use("/api/user", User_router)
 
 
 /* End of api routes */

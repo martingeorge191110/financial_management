@@ -30,7 +30,7 @@ Auth_router.route("/verify_reseting_password/")
                      )
 
 
-/* Verifing to open the page or not */
+/* Verifing to open the page or not which will verify the code on */
 Auth_router.route("/reset_password_page/:id")
                      .get(
                         auth_instance.reset_password_page_valid(),
