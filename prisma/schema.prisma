@@ -32,6 +32,43 @@ model User {
   created_at           DateTime      @default(now())
   updated_at           DateTime      @updatedAt
   Transaction          Transaction[]
+  employee             Employee?     @relation("account")
+}
+
+model Company {
+  id             String       @id @default(uuid())
+  name           String
+  account_email  String
+  password       String
+  r_n            String? // regesteration number
+  industry       String?
+  address        String?
+  phone          String?
+  email          String?
+  web_url        String?
+  establish_date DateTime?
+  employee_count Int?
+  status         String?
+  location       String?
+  active         Boolean?
+  company_size   Company_Size
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+
+  employees Employee[] @relation("employee")
+}
+
+model Employee {
+  id         String    @id @unique
+  company_id String
+  title      String
+  salary     Float
+  hire_date  DateTime?
+  holidays   Int?
+  rate       Float?
+
+  user    User    @relation("account", fields: [id], references: [id], onUpdate: Cascade)
+  company Company @relation("employee", fields: [company_id], references: [id], onDelete: Cascade)
 }
 
 model Transaction {
@@ -93,6 +130,12 @@ enum User_roles {
   EMPLOYEE
   MANAGER
   ADMIN
+}
+
+enum Company_Size {
+  SMALL
+  MEDIUM
+  LARGE
 }
 
 enum Currency {
