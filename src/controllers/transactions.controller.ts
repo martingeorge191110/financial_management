@@ -5,6 +5,7 @@ import Transactions_validator from "../validators/transactions.validator.ts";
 import { response_type, token_object } from "../types/app.types.ts";
 import Api_error from "../middlewares/error.middleware.ts";
 import prisma_db from "../prisma.db.ts";
+import { maxTime } from "date-fns/constants";
 
 
 
@@ -129,6 +130,50 @@ class Transactions_controller extends Transactions_validator {
          })
       } catch (err) {
          return (next(Api_error.server_error("Server error while filtering based on month!")))
+      }
+   }
+
+   /* Controller that filter based on user needs
+      --> */
+   public filter_controller = async (req: Request, res: Response, next: NextFunction): response_type => {
+      const token_inf: (token_object | null) = req.token || null
+      const filter: (string | null) = req.filter_query || null
+      const value: (string | null) = req.filter_value || null
+      const max_time: (number | null) = req.max_time || null
+
+      const currentDate = new Date();
+
+      const from_date = new Date(currentDate);
+      max_time && from_date.setDate(currentDate.getDate() - max_time);
+
+
+      try {
+         const transactions: Array<Transaction> = await prisma_db.transaction.findMany({
+            where: {
+               userId: token_inf?.id,
+               [`${filter}`]: value,
+               date: {
+                  gte: from_date
+               }
+            }
+         })
+
+         let total: number = 0;
+         let revenues: number = 0, expenses: number = 0, liabilities: number = 0;
+         for (const i of transactions) {
+            if (i.type === "REVENUE")
+               total += i.amount, revenues += i.amount;
+            else if (i.type === "EXPENSE")
+               total -= i.amount, expenses += i.amount
+            else
+               total -= i.amount, liabilities += i.amount
+         }
+
+         this.response_successfuly(res, 200, "Transactions retreived successfuly!", {
+            transactions, revenues, expenses, liabilities
+         })
+      } catch (err) {
+         return (next(Api_error.server_error("Server error while get filter transactions!")))
       }
    }
 }

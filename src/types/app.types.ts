@@ -40,7 +40,10 @@ declare global {
       interface Request {
          user?: User;
          token?: token_object;
-         transaction?: Transaction
+         transaction?: Transaction;
+         filter_query?: string;
+         filter_value?: string;
+         max_time?: number
       }
    }
 }

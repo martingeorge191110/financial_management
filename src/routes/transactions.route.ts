@@ -30,6 +30,13 @@ Transactions_route.route("/current_month/")
                         )
 
 
+Transactions_route.route("/filter/")
+                        .get(
+                           transactions_instance.transactions_filter_valid(),
+                           transactions_instance.validation_error,
+                           transactions_instance.filter_controller
+                        )
+
 Transactions_route.route("/:id")
                         .all(
                            transactions_instance.transaction_id_valid(),
