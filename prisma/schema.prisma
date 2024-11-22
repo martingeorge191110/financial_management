@@ -36,24 +36,25 @@ model User {
 }
 
 model Company {
-  id             String       @id @default(uuid())
-  name           String
-  account_email  String
-  password       String
-  r_n            String? // regesteration number
-  industry       String?
-  address        String?
-  phone          String?
-  email          String?
-  web_url        String?
-  establish_date DateTime?
-  employee_count Int?
-  status         String?
-  location       String?
-  active         Boolean?
-  company_size   Company_Size
-  created_at     DateTime     @default(now())
-  updated_at     DateTime     @updatedAt
+  id               String       @id @default(uuid())
+  name             String
+  account_email    String       @unique
+  password         String
+  r_n              String? // regesteration number
+  industry         String?
+  address          String?
+  phone            String?
+  email            String       @unique
+  web_url          String?
+  establish_date   DateTime?
+  employee_count   Int?
+  status           String?
+  location         String?
+  active           Boolean?
+  company_size     Company_Size
+  complete_account Boolean      @default(false)
+  created_at       DateTime     @default(now())
+  updated_at       DateTime     @updatedAt
 
   employees Employee[] @relation("employee")
 }

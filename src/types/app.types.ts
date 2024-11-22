@@ -1,4 +1,4 @@
-import { Transaction, User } from "@prisma/client"
+import { Company, Transaction, User } from "@prisma/client"
 import { Request, Response } from "express"
 import { ValidationChain } from "express-validator"
 
@@ -43,7 +43,8 @@ declare global {
          transaction?: Transaction;
          filter_query?: string;
          filter_value?: string;
-         max_time?: number
+         max_time?: number;
+         company?: Company;
       }
    }
 }

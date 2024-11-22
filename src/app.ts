@@ -7,6 +7,7 @@ import Api_error from './middlewares/error.middleware.ts'
 import Auth_router from './routes/auth.routes.ts'
 import User_router from './routes/user.routes.ts'
 import Transactions_route from './routes/transactions.route.ts'
+import Company_route from './routes/company.routes.ts'
 
 
 dotenv.config()
@@ -41,6 +42,8 @@ app.use("/api/user", User_router)
 /* Transactions manipulating Route */
 app.use("/api/transactions", Transactions_route)
 
+/* Companies manipulating Route */
+app.use("/api/company", Company_route)
 
 /* End of api routes */
 
